@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png">
   <link rel="manifest" href="../site.webmanifest">
 
-  <title>ProAce.tech</title>
+  <title>C++ Sensor Interface</title>
 
   <!-- Bootstrap core CSS -->
   <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
             <h1>C++ Sensor Interface</h1>
-            <h2 class="subheading">Because it's easier if they all respond the same</h2>
+            <h2 class="subheading">Because it's easier if they all speak the same language</h2>
             <span class="meta">Posted on March 26, 2020</span>
           </div>
         </div>
@@ -56,35 +56,129 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <p>Lorem Ipsum or whatever</p>
+          <p>At the company I worked for at the time I was given the task to develop a new sensor platform. This
+            platform had to enable the end user to modularly switch out sensors during runtime so it would be easier to
+            service or update in the future. After the hardware design and starting with the software design I quickly
+            ran into a problem. There is no consistency between sensor responses and various existing libraries!</p>
+          <p>Making use of the Arduino environment there were libraries available for most of the sensors we planned to
+            use, however they had no consistency and it proved easier to write our own. After writing these drivers the
+            next problem arose, how are you going to manage all these different sensors?</p>
 
-          <pre><code class="language-cpp">#define test
+          <h2 class="section-heading">What not to do!</h2>
 
-void loop() 
+          <p>My first go at this problem was doing all the initialization and reading sequentially in the main. This
+            meant that for every sensor a class needed to be initialized, an enabled variable needed to be added, it had
+            to be correctly initialized and it’s special readout had to be executed to get the data. This very quickly
+            became bloated and unreadable. An example is given below.</p>
+
+          <pre><code class="language-cpp">Sensor1 s1;
+Sensor2 s2;
+
+s1_enabled = false;
+s2_enabled = false;
+
+void setup()
 {
-// this is a longer sentence to check what the code block does
+    Wire.begin();
+    s1_enabled = s1.begin();
+
+    Serial.begin(115200);
+    s2_enabled = s2.begin();
+    s2.set_some_parameter(variable)
+}
+
+void loop()
+{
+    if (s1_enabled)
+    {
+        if (s1.read_measurement())
+        {
+            // Add the values to a datapoint
+            // Do some logging
+        }
+        else
+        {
+            // Error handling, disable sensor?
+            // Do some error logging
+        }
+    }
+
+    // Rince and repeat for the other sensors
 }</code></pre>
 
-          <h2 class="section-heading">The Final Frontier</h2>
+          <h2 class="section-heading">So what now?</h2>
 
-          <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a
-            task to occupy the generations. And no matter how much progress one makes, there is always the thrill of
-            just beginning.</p>
+          <p>Being a novice in C++ programming I had only touched the surface of classes and inheritance, but I knew
+            that the solution would lie within those realms. What I needed was an option to make an array of sensor
+            classes. This would hopefully enable me to iterate over it and with a minimum of code check if the sensor is
+            available, do a readout and handle the error if one occurs.</p>
 
-          <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow.
-            Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the
-            next ten.</blockquote>
 
-          <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a
-            historical process which mankind is carrying out in accordance with the natural laws of human development.
-          </p>
+          <p>To enable this functionality an ISensor class was created with five virtual functions and a variable, these
+            represented all the functionality that a sensor had to have.</p>
 
-          <!-- picture with undertitle -->
-          <a href="#">
-            <img class="img-fluid" src="img/post-sample-image.jpg" alt="">
-          </a>
-          <span class="caption text-muted">To go places and do things that have never been done before – that’s what
-            living is all about.</span>
+          <pre><code class="language-cpp">class ISensor
+{
+public:
+    virtual boolean init() = 0;
+    virtual boolean get_measurements() = 0;
+    virtual boolean reset() = 0;
+    virtual void log_measurements() = 0;
+    virtual void log_status() = 0;
+
+    bool enabled;
+}</code></pre>
+
+          <p>By creating a wrapper for every sensor driver that inherited this class, a uniform way of starting,
+            resetting and reading the sensor could be created. Every wrapper incorporated the correct way for that
+            sensor to perform these actions. And by setting the enabled bool, an easier way to track the state of a
+            sensor was added. By doing so a routine could be written that easily checks if a sensor is available, and if
+            not tries to restart it every time interval.</p>
+
+          <p>By doing so the first example could be rewritten to the following.</p>
+
+          <pre><code class="language-cpp">Sensor1_wrapper s1;
+Sensor2_wrapper s2;
+
+// Array of the sensor interface
+ISensor *sensors[] = {&s1, &s2};
+const uint8_t number_of_sensors = sizeof(sensors) / sizeof(sensors[0]);
+
+void setup()
+{
+  for (int i = 0; i &lt number_of_sensors; i++) // Check all initialised sensors.
+  {
+    if (!sensors[i]-&gtenabled) // If the sensor is not enabled.
+    {
+      sensors[i]-&gtinit();	    // Try initialisating the sensor.
+      sensors[i]-&gtlog_status(); // And log the sensor status.
+    }
+  }
+}
+
+void loop()
+{
+for (int i = 0; i &lt number_of_sensors; i++) // Check all initialised sensors.
+  {
+    if (sensors[i]-&gtenabled) // If the sensor is enabled.
+    {
+      if (sensors[i]-&gtget_measurements()) // Start a measurement.
+      {
+        sensors[i]-&gtlog_measurements(); // And log the measurement if the measurement was succesfull.
+      }
+      else // If the measurement fails.
+      {
+        sensors[i]-&gtreset();		 // Reset the sensor.
+        sensors[i]-&gtenabled = false; // Disable the sensor till the next sensor check.
+        sensors[i]-&gtlog_status();	 // And log the sensor status.
+      }
+    }
+  }
+}</code></pre>
+
+          <p>On first hand this might not look shorter, until you add a couple more sensors. In the first example the
+            lines of code will grow the same amount for every added sensor. Meanwhile in the latter example only a
+            wrapper class has to be added and the full functionality will be available.</p>
 
         </div>
       </div>
