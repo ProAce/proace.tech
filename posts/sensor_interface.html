@@ -1,71 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="Yorick Smilda" />
 
-<head>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../img/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../img/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="Yorick Smilda">
+    <title>C++ Sensor Interface</title>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png">
-  <link rel="manifest" href="../site.webmanifest">
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
-  <title>C++ Sensor Interface</title>
+    <!-- Custom fonts for this template -->
+    <link
+      href="../vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-  <!-- Bootstrap core CSS -->
-  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="../css/clean-blog.css" rel="stylesheet" />
 
-  <!-- Custom fonts for this template -->
-  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
-    type='text/css'>
-  <link
-    href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
-    rel='stylesheet' type='text/css'>
+    <link href="../vendor/prism/prism.css" rel="stylesheet" />
+  </head>
 
-  <!-- Custom styles for this template -->
-  <link href="../css/clean-blog.css" rel="stylesheet">
-
-  <link href="../vendor/prism/prism.css" rel="stylesheet" />
-</head>
-
-<body>
-  <!-- Page Header -->
-  <header class="masthead" style="background-image: url('img/post-bg.jpg')">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <div class="post-heading">
-            <h1>C++ Sensor Interface</h1>
-            <h2 class="subheading">Because it's easier if they all speak the same language</h2>
-            <span class="meta">Posted on March 26, 2020</span>
+  <body>
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/post-bg.jpg');">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>C++ Sensor Interface</h1>
+              <h2 class="subheading">
+                Because it's easier if they all speak the same language
+              </h2>
+              <span class="meta">Posted on March 26, 2020</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <hr>
+    <hr />
 
-  <!-- Post Content -->
-  <article>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <p>A problem arose when I was given the task to develop a new sensor platform for the company I worked for at
-            the time. This platform had to have the ability to modularly switch out sensors during runtime. In software
-            this meant to keep track of the availability and status of all sensors and act accordingly.</p>
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>
+              A problem arose when I was given the task to develop a new sensor
+              platform for the company I worked for at the time. This platform
+              had to have the ability to modularly switch out sensors during
+              runtime. In software this meant to keep track of the availability
+              and status of all sensors and act accordingly.
+            </p>
 
-          <p>Some of the sensors used on the new platform had already been used in other projects, so to ease the
-            development those were reused. Some were pretty consistent naming and function wise, but this wasn’t the
-            case for all of them. Building a working system with these becomes unreadable and bloated really fast, as
-            can be seen in the example below.</p>
+            <p>
+              Some of the sensors used on the new platform had already been used
+              in other projects, so to ease the development those were reused.
+              Some were pretty consistent naming and function wise, but this
+              wasn’t the case for all of them. Building a working system with
+              these becomes unreadable and bloated really fast, as can be seen
+              in the example below.
+            </p>
 
-          <pre><code class="language-cpp">Sensor1 s1;
+            <pre><code class="language-cpp">Sensor1 s1;
 Sensor2 s2;
 
 s1_enabled = false;
@@ -100,37 +134,44 @@ void loop()
     // Rince and repeat for the other sensors
 }</code></pre>
 
-          <h2 class="section-heading">So what would be a better solution?</h2>
+            <h2 class="section-heading">So what would be a better solution?</h2>
 
-          <p>What I wanted to make was a kind of manager, something I could add all the sensors to and iterate over
-            them. So I needed a way to uniformalise all the sensor drivers. Que a search around google and stack
-            overflow and the conclusion was, I need an interface class.</p>
+            <p>
+              What I wanted to make was a kind of manager, something I could add
+              all the sensors to and iterate over them. So I needed a way to
+              uniformalise all the sensor drivers. Que a search around google
+              and stack overflow and the conclusion was, I need an interface
+              class.
+            </p>
 
-          <p>This class with virtual functions would be inherited by a sensor wrapper which combines the drivers
-            functionality into one function, which is universal between the wrappers. The functions I needed every
-            wrapper to do were:</p>
+            <p>
+              This class with virtual functions would be inherited by a sensor
+              wrapper which combines the drivers functionality into one
+              function, which is universal between the wrappers. The functions I
+              needed every wrapper to do were:
+            </p>
 
-          <ul>
-            <li>
-              Initialise the sensor
-            </li>
-            <li>
-              Get the measurements and store them in a datapoint
-            </li>
-            <li>
-              Reset the sensor
-            </li>
-            <li>
-              Log the most recent measurement (debugging)
-            </li>
-            <li>
-              And log its enable status (debugging)
-            </li>
-          </ul>
+            <ul>
+              <li>
+                Initialise the sensor
+              </li>
+              <li>
+                Get the measurements and store them in a datapoint
+              </li>
+              <li>
+                Reset the sensor
+              </li>
+              <li>
+                Log the most recent measurement (debugging)
+              </li>
+              <li>
+                And log its enable status (debugging)
+              </li>
+            </ul>
 
-          <p>The implementation of the ISensor class looked like this:</p>
+            <p>The implementation of the ISensor class looked like this:</p>
 
-          <pre><code class="language-cpp">class ISensor
+            <pre><code class="language-cpp">class ISensor
 {
 public:
     virtual boolean init() = 0;
@@ -142,9 +183,9 @@ public:
     bool enabled;
 }</code></pre>
 
-          <p>When implemented the first example can be written like this:</p>
+            <p>When implemented the first example can be written like this:</p>
 
-          <pre><code class="language-cpp">
+            <pre><code class="language-cpp">
 Sensor1_wrapper s1;
 Sensor2_wrapper s2;
 
@@ -184,52 +225,65 @@ for (int i = 0; i < number_of_sensors; i++) // Check all initialised sensors.
   }
 }</code></pre>
 
-          <p>The “magic” happens in the sensors array. This array of type ISensor contains the pointers to the wrapper
-            classes we want to use. By iterating over this array and calling the virtual functions, the correct startup
-            sequence for every sensor can be executed while maintaining readability. The second example might not look
-            shorter, but when adding a sensor only the array has to be extended. The rest of the code scales
-            automatically.</p>
+            <p>
+              The “magic” happens in the sensors array. This array of type
+              ISensor contains the pointers to the wrapper classes we want to
+              use. By iterating over this array and calling the virtual
+              functions, the correct startup sequence for every sensor can be
+              executed while maintaining readability. The second example might
+              not look shorter, but when adding a sensor only the array has to
+              be extended. The rest of the code scales automatically.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </article>
+    </article>
 
-  <hr>
+    <hr />
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <ul class="list-inline text-center">
-            <li class="list-inline-item">
-              <a href="https://www.linkedin.com/in/yorick-smilda/">
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a href="https://www.github.com/ProAce">
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-          </ul>
-          <p class="copyright text-muted">Copyright &copy; ProAce.tech 2020</p>
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://www.linkedin.com/in/yorick-smilda/">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.github.com/ProAce">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://grabcad.com/yorick.smilda-2">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-cube fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">
+              Copyright &copy; ProAce.tech 2020
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="../vendor/jquery/jquery.min.js"></script>
-  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <script src="../vendor/prism/prism.js"></script>
-</body>
-
+    <script src="../vendor/prism/prism.js"></script>
+  </body>
 </html>
