@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="Yorick Smilda" />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../img/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../img/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
+
+    <title>A LED controller</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom fonts for this template -->
+    <link
+      href="../vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Custom styles for this template -->
+    <link href="../css/clean-blog.css" rel="stylesheet" />
+
+    <link href="../vendor/prism/prism.css" rel="stylesheet" />
+
+    <!-- Custom files for this project -->
+    <script src="../projects/led_controller/iro.min.js"></script>
+    <script src="../projects/led_controller/led_controller.js"></script>
+    <link
+      href="../projects/led_controller/led_controller.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/post-bg.jpg');">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>A LED controller</h1>
+              <h2 class="subheading">Control all the RGB via the web!</h2>
+              <span class="meta">Posted on May 6, 2020</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <hr />
+
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>
+              This is a project I've been wanting to do for a very long time,
+              but never had the time or knowledge to finish it properly. The
+              idea of a simple color wheel with which I could control a RGB
+              LEDstrip has been on my mind since I got my first ESP8266 module.
+              When attempting this project I ran into the project of finding a
+              suitable color picker as I knew nothing about javascript. But when
+              my sister asked me to make some LEDstrips so she could attach them
+              to her ceiling I knew the time had come to finally make it real.
+              The complete project can be found
+              <a href="https://github.com/ProAce/led_controller">here</a> on my
+              GitHub page.
+            </p>
+
+            <h2 class="section-heading">How does it work?</h2>
+
+            <p>
+              This project is based around a simple HTML page served to a
+              connecting client which then communicates via GET and POST
+              requests with the host, an ESP8266 module. The color wheel is made
+              using <a href="https://iro.js.org/">this</a> brilliant library
+              which made the color picking a whole lot easier. By implementing
+              one of the event triggers it was possible to send a message to the
+              ESP8266 when a color was chosen. A picked color is stored and send
+              in a JSON format. This made it easy to extract on the host's side.
+              Beneath you find a functional example of the webpage.
+            </p>
+
+            <div class="led_controller">
+              <div class="c" id="cW"></div>
+
+              <div class="c">
+                <button onclick="leds_off()" class="btn">
+                  Turn LED's off
+                </button>
+                <button onclick="leds_on()" class="btn">
+                  Turn LED's on
+                </button>
+              </div>
+            </div>
+
+            <p>
+              On the ESP8266's side I made use of the excellent WebServer
+              library available. I registered two functions to be called when a
+              POST or GET request was received on /led. For any other files the
+              SPIFFS file system was used. When a message was received that was
+              not registered to a function, the ESP8266 would look in its file
+              system if that file existed and otherwise send a 404 error. This
+              made it easy to upload new files without erasing the firmware.
+            </p>
+
+            <p>
+              The POST request accepted a JSON message containing the R, G, and
+              B values. These got extracted and stored in a global variable.
+              When a GET request was received, these global variables were
+              repackaged in a JSON message and returned to the client. This made
+              it possible to set the color wheel to the current color when a new
+              client connected. The last thing to do was write the globals to
+              the PWM outputs in the main loop.
+            </p>
+
+            <p>
+              When implementing this controller in my sisters room I ran into a
+              problem. At first I had configured the color wheel to send a new
+              color on every change. This meant that a ton of messages were send
+              to the ESP8266 as you slide over the wheel. This made the module
+              hang and eventually reboot. By changing this to only sending a
+              color on the last choice it is much more stable.
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr />
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a
+                  href="https://www.linkedin.com/in/yorick-smilda/"
+                  title="LinkedIn"
+                >
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin-in fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.github.com/ProAce" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://grabcad.com/yorick.smilda-2" title="Grabcad">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-cube fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://thingiverse.com/ProAceNL" title="Thingiverse">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-layer-group fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">
+              Copyright &copy; ProAce.tech 2020
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../vendor/prism/prism.js"></script>
+  </body>
+</html>
