@@ -10,7 +10,7 @@
 }
 
 body {
-  font-size: 20px;
+  font-size: 16px;
   color: #212529;
   font-family: 'Lora', 'Times New Roman', serif;
 }
@@ -120,6 +120,9 @@ img::-moz-selection {
 }
 
 @media only screen and (min-width: 992px) {
+  body {
+    font-size: 20px;
+  }
   #mainNav {
     border-bottom: 1px solid transparent;
     background: transparent;
