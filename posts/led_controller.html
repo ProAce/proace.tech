@@ -156,6 +156,47 @@
               hang and eventually reboot. By changing this to only sending a
               color on the last choice it is much more stable.
             </p>
+
+            <h2 class="section-heading">Update: Sockets make it better!</h2>
+
+            <p>
+              After finishing this project I started using this technique of
+              controlling projects via a webpage more often. But one thing kept
+              bothering me and that is the long time it took to perform the
+              GET/POST request. Trying to find a way to speed things up I
+              stumbled upon WebSockets. This concept seemed perfect for the
+              usage in my projects.
+            </p>
+
+            <p>
+              The newest release of the LED controller firmware now includes a
+              websocket server (courtesy of
+              <a href="https://github.com/gilmaimon/ArduinoWebsockets"
+                >Gilmaimon</a
+              >) and a simple CSV parsing structure. This way I can reliably
+              send packages of data to the ESP module.
+            </p>
+
+            <p>
+              To get this new feature to work properly I had to make sure that
+              the webpage closed the websocket client before reloading or
+              closing the page. If this was left to the browser, in my case
+              Google Chrome, it would flood the ESP module with closing requests
+              resulting in a crash. To counter this the following was added to
+              the javascript:
+            </p>
+
+            <pre><code class="language-cpp">window.onbeforeunload = function () {
+socket.close();
+window.location.reload(true);
+};</code></pre>
+
+            <p>
+              This tells the browser to close the WebSocket client named socket
+              and to reload the page. The latter does the same as the refresh
+              button but in my testing I found that this was necessary to
+              counteract the closing requests "bug".
+            </p>
           </div>
         </div>
       </div>
